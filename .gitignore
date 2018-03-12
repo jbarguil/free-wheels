@@ -1,13 +1,7 @@
 .sass-cache
 _site
 .DS_Store
-latex/*.aux
-latex/*.gz
-latex/*.log
-latex/*.pdf
-latex/*.blg
-latex/*.bbl
-latex/*.dvi
+latex/
 
 # Ruby libs
 .bundle/
