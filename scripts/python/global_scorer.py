@@ -8,7 +8,8 @@ import json
 
 # Hack to force float precision in output file.
 from json import encoder
-encoder.FLOAT_REPR = lambda o: format(o, '.4f')
+_PRECISION = 4  # Floating point precision.
+encoder.FLOAT_REPR = lambda o: format(o, '.{}f'.format(_PRECISION))
 
 
 _DISTRICTS_FILE = 'data/distritos-simple-latlong.json'
@@ -196,6 +197,8 @@ def _save_scores(districts_by_id,
                  normalize=True):
     """Saves scores into objects of a districts dict.
     """
+    def intscore(val):
+        return int(val * 10 ** _PRECISION) if val is not None else None
 
     # Normalizes scores.
     nrm_scores = []
@@ -210,7 +213,7 @@ def _save_scores(districts_by_id,
             dtc['score'] = int_lin(_MIN_SCORE, _MAX_SCORE, min_s, max_s, scr)
         else:
             dtc['score'] = scr
-        nrm_scores.append(dtc['score'])
+        nrm_scores.append(intscore(dtc['score']))
     nrm_scores = sorted(nrm_scores, reverse=True)
 
     # Stores result in districts array.
@@ -218,7 +221,7 @@ def _save_scores(districts_by_id,
         districts_by_id[dtc[id_field]]['scores'][score_name] = {
             'value': dtc['score'],
             'color': _interpolate_color(dtc['score']),
-            'ranking': nrm_scores.index(dtc['score']) + 1,
+            'ranking': nrm_scores.index(intscore(dtc['score'])) + 1,
         }
 
     return districts_by_id
